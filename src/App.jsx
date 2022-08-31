@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from 'react'
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
-import 'ol/ol.css';import Icon from 'ol/style/Icon';
+import 'ol/ol.css';
 import './App.css'
 const SOURCE = "https://data.bmkg.go.id/DataMKG/TEWS/gempadirasakan.json"
 import {Vector} from 'ol/source';
@@ -10,13 +10,11 @@ import VectorLayer from 'ol/layer/Vector';
 import {transform} from 'ol/proj';
 import Feature from 'ol/Feature';
 import Point from 'ol/geom/Point';
-import {fromLonLat} from 'ol/proj';
 import Stroke from 'ol/style/Stroke';
 import {Style} from "ol/style.js";
 import CircleStyle from 'ol/style/Circle';
 
 import Fill from 'ol/style/Fill';
-import {parse} from "ol/xml.js";
 
 function App() {
     const [data, setData] = useState([])
@@ -26,8 +24,6 @@ function App() {
     mapRef.current = map;
 
     const center = transform([118.17353798950116,-1.4065452145022859], 'EPSG:4326', 'EPSG:3857');
-    const center2 = transform([118.17353798950116,-2.4065452145022859], 'EPSG:4326', 'EPSG:3857');
-
 
     const buatMap =  (data) => {
 
@@ -60,9 +56,6 @@ function App() {
             }))
         },[])
 
-
-
-
         const initialMap = new Map({
             target: mapElement.current,
             layers: [
@@ -76,38 +69,16 @@ function App() {
             }),
         });
 
-const addmarker =  (data) => {
-    const rome = new Feature({
-        geometry: new Point(center2),
-    });
-    console.log(rome)
-    rome.setStyle(
-        new Style({
-            image: new Icon({
-                color: '#BADA55',
-                crossOrigin: 'anonymous',
-                src: 'https://media.istockphoto.com/vectors/red-radiation-concentric-cirles-on-white-background-vector-id961697090?k=20&m=961697090&s=612x612&w=0&h=vVDdo3O8wVJzHThKAutG67z5KH_AUbSGHxOG6jVznWg=',
+        let layer = new VectorLayer({
+            source: new Vector({
+                features:newFeature,
             }),
-        })
-    );
 
-    let layer = new VectorLayer({
-        source: new Vector({
-            features:newFeature,
-        }),
-
-    });
-    initialMap.addLayer(layer);
-}
-const center3 = transform([0,0], 'EPSG:4326', 'EPSG:3857');
-
-addmarker(center3);
+        });
+        initialMap.addLayer(layer);
         setMap(initialMap);
     }
 
-const fungsi = (data) => {
-    console.log(data)
-}
 
     useEffect(() => {
         const getData = async () => {
@@ -115,7 +86,6 @@ const fungsi = (data) => {
             const dataJSON = await response.json()
             const dataGempa = dataJSON.Infogempa.gempa
             setData(dataGempa)
-            // fungsi(dataGempa)
             buatMap(dataGempa)
         }
 
@@ -123,15 +93,11 @@ const fungsi = (data) => {
 
     }, [])
 
-
-
-
-
   return (
       <div className="App">
       <div style={{height:'100vh',width:'100%'}} ref={mapElement} className="map-container" />
       </div>
-          )
+    );
 }
 
 export default App
